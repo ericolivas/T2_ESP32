@@ -1,4 +1,8 @@
 /* uart.c */
+#include "../_bsp/bsp.h"
+
+#ifdef ESP32
+
 #include "../_hal/uart.h"
 #include "driver/uart.h"
 #include <stdarg.h>
@@ -25,3 +29,24 @@ void uart_print(const char *fmt, ...) {
     va_end(args);
     uart_write_bytes(UART_NUM_0, buffer, strlen(buffer));
 }
+
+#endif
+
+#ifdef MSP432
+
+#include "uart.h"
+
+/* Definición única del puntero de función para UART */
+void (*uartSendCallback)(const char*) = 0;
+
+void uartInit(void) {
+    /* Si se requiere inicializar hardware UART, se puede hacer aquí.
+       En este ejemplo, la inicialización se realiza en el main. */
+}
+
+void uartSend(const char* message) {
+    if(uartSendCallback != 0) {
+        uartSendCallback(message);
+    }
+}
+#endif
